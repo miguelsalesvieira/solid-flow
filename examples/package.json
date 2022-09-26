@@ -1,0 +1,19 @@
+{
+    "name": "solid-flow-examples",
+    "version": "0.0.0",
+    "scripts": {
+        "start": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "typescript": "^4.8.2",
+        "vite": "^3.0.9",
+        "vite-plugin-solid": "^2.3.0"
+    },
+    "dependencies": {
+        "@solidjs/router": "^0.4.3",
+        "solid-flow": "file:../",
+        "solid-js": "^1.5.6"
+    }
+}
+  

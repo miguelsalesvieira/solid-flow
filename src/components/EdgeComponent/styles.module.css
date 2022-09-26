@@ -1,0 +1,38 @@
+.delete {
+    pointer-events: all;
+}
+
+.icon {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    fill: white;
+}
+
+.circle {
+    cx: 0;
+    cy: 0;
+    r: 12;
+    fill: rgba(168, 168, 168, 1);
+}
+
+.edge {
+    pointer-events: all;
+    stroke: rgba(168, 168, 168, 0.8);
+    stroke-width: 2;
+    fill: transparent;
+    cursor: pointer;
+}
+
+.edgeSelected {
+    stroke: rgba(168, 168, 168, 1);
+    stroke-width: 3;
+    fill: transparent;
+    z-index: 100;
+}
+
+.edgeNew {
+    stroke: rgba(168, 168, 168, 0.4);
+    stroke-width: 2;
+    fill: transparent;
+}
