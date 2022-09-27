@@ -1,8 +1,8 @@
-import { Component } from "solid-js";
+import { Component, createSignal } from "solid-js";
 import { SolidFlow } from "solid-flow";
 import styles from "./styles.module.css";
 
-const nodes = [
+const initialNodes = [
     {
         position: { x: 50, y: 100 },
         data: {
@@ -59,7 +59,7 @@ const nodes = [
     },
 ];
 
-const edges = [
+const initialEdges = [
     {
         sourceNode: 0,
         sourceOutput: 1,
@@ -95,7 +95,7 @@ const edges = [
 const Simple: Component = () => {
     return (
         <div class={styles.main}>
-            <SolidFlow nodes={nodes} edges={edges} />
+            <SolidFlow nodes={initialNodes} edges={initialEdges} />
         </div>
     );
 };

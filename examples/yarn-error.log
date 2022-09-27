@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/bin/yarn add solid-js
+  /usr/local/bin/node /usr/local/bin/yarn add -D @types/solid-flow
 
 PATH: 
   /Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/miguelvieira/Library/Python/3.10/bin:/Users/miguelvieira/.local/bin:/Users/miguelvieira/Library/Python/3.10/bin:/Users/miguelvieira/.local/bin:/Users/miguelvieira/Library/Python/3.10/bin:/Users/miguelvieira/.local/bin
@@ -14,12 +14,17 @@ Platform:
   darwin arm64
 
 Trace: 
-  SyntaxError: /Users/miguelvieira/Projects/solid-flow/examples/package.json: Unexpected token } in JSON at position 365
-      at JSON.parse (<anonymous>)
-      at /usr/local/lib/node_modules/yarn/lib/cli.js:1625:59
-      at Generator.next (<anonymous>)
-      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:310:30)
-      at /usr/local/lib/node_modules/yarn/lib/cli.js:321:13
+  Error: https://registry.yarnpkg.com/@types%2fsolid-flow: Not found
+      at Request.params.callback [as _callback] (/usr/local/lib/node_modules/yarn/lib/cli.js:67029:18)
+      at Request.self.callback (/usr/local/lib/node_modules/yarn/lib/cli.js:140883:22)
+      at Request.emit (node:events:390:28)
+      at Request.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:141855:10)
+      at Request.emit (node:events:390:28)
+      at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:141777:12)
+      at Object.onceWrapper (node:events:509:28)
+      at IncomingMessage.emit (node:events:402:35)
+      at endReadableNT (node:internal/streams/readable:1343:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
 
 npm manifest: 
   {
@@ -37,6 +42,7 @@ npm manifest:
       "dependencies": {
           "@solidjs/router": "^0.4.3",
           "solid-flow": "file:../",
+          "solid-js": "^1.5.6"
       }
   }
 
@@ -738,15 +744,10 @@ Lockfile:
     dependencies:
       solid-js "^1.5.1"
   
-  solid-js@^1.5.1:
+  solid-js@^1.5.1, solid-js@^1.5.6:
     version "1.5.6"
     resolved "https://registry.yarnpkg.com/solid-js/-/solid-js-1.5.6.tgz#607e451e7d04301df8424b4d92197d3e3fcad30c"
     integrity sha512-EA7hjMIEdDUuV6Fk3WUQ2fPx7sRnhjl+3M59zj6Sh+c7c3JF3N1cSViBvX8MYJG9vEBEqKQBZUfKHPe/9JgKvQ==
-    dependencies:
-      csstype "^3.1.0"
-  
-  "solid-js@file:../node_modules/solid-js":
-    version "1.5.6"
     dependencies:
       csstype "^3.1.0"
   

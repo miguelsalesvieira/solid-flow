@@ -8,7 +8,8 @@
     "devDependencies": {
         "typescript": "^4.8.2",
         "vite": "^3.0.9",
-        "vite-plugin-solid": "^2.3.0"
+        "vite-plugin-solid": "^2.3.0",
+        "@types/solid-flow": "file:../dist"
     },
     "dependencies": {
         "@solidjs/router": "^0.4.3",
@@ -16,4 +17,3 @@
         "solid-js": "^1.5.6"
     }
 }
-  
