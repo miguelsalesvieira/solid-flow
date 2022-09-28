@@ -1,4 +1,4 @@
-import { Component, createSignal } from "solid-js";
+import { Component, createEffect, createSignal } from "solid-js";
 import { createStore, produce } from "solid-js/store";
 import EdgesBoard from "./EdgesBoard";
 import NodesBoard from "./NodesBoard";
@@ -59,16 +59,24 @@ interface Props {
     onEdgesChange: (newEdges: EdgeProps[]) => void;
 }
 
-const FlowChart: Component<Props> = (props: Props) => {
+function getEdgeId(nodeOutId: string, outputIndex: number, nodeInId: string, inputIndex: number) {
+    return `edge_${nodeOutId}:${outputIndex}_${nodeInId}:${inputIndex}`;
+}
+
+function getInitialEdges(nodes: NodeProps[]): {
+    initEdgesNodes: EdgesNodes;
+    initEdgesPositions: EdgesPositions;
+    initEdgesActives: EdgesActive;
+} {
     const initEdgesNodes: EdgesNodes = {};
     const initEdgesPositions: EdgesPositions = {};
     const initEdgesActives: EdgesActive = {};
 
-    for (let i = 0; i < props.nodes.length; i++) {
-        for (let j = 0; j < props.nodes.length; j++) {
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = 0; j < nodes.length; j++) {
             if (i !== j) {
-                const nodeI = props.nodes[i];
-                const nodeJ = props.nodes[j];
+                const nodeI = nodes[i];
+                const nodeJ = nodes[j];
 
                 for (let x = 0; x < nodeI.outputs; x++) {
                     for (let y = 0; y < nodeJ.inputs; y++) {
@@ -81,56 +89,125 @@ const FlowChart: Component<Props> = (props: Props) => {
             }
         }
     }
+    return { initEdgesNodes, initEdgesPositions, initEdgesActives };
+}
 
+function getInitialNodes(
+    nodes: NodeProps[],
+    edges: EdgeProps[]
+): {
+    initNodesPositions: Position[];
+    initNodesData: NodeData[];
+    initNodesOffsets: { inputs: { offset: Position }[]; outputs: { offset: Position }[] }[];
+} {
+    const initNodesPositions = nodes.map((node: NodeProps) => node.position);
+    const initNodesData = nodes.map((node: NodeProps, nodeIndex: number) => {
+        return {
+            data: node.data,
+            inputs: node.inputs,
+            outputs: node.outputs,
+            edgesIn: edges
+                .map((edge: EdgeProps, edgeIndex: number) => {
+                    if (edge.targetNode === nodeIndex)
+                        return getEdgeId(edge.sourceNode.toString(), edge.sourceOutput, edge.targetNode.toString(), edge.targetInput);
+                    return "null";
+                })
+                .filter((elem: string) => elem !== "null"),
+            edgesOut: edges
+                .map((edge: EdgeProps, edgeIndex: number) => {
+                    if (edge.sourceNode === nodeIndex)
+                        return getEdgeId(edge.sourceNode.toString(), edge.sourceOutput, edge.targetNode.toString(), edge.targetInput);
+                    return "null";
+                })
+                .filter((elem: string) => elem !== "null"),
+        };
+    });
+    const initNodesOffsets = nodes.map((node: NodeProps, nodeIndex: number) => {
+        return {
+            inputs: [...Array(node.inputs)].map((elem: number) => {
+                return { offset: { x: 0, y: 0 } };
+            }),
+            outputs: [...Array(node.outputs)].map((elem: number) => {
+                return { offset: { x: 0, y: 0 } };
+            }),
+        };
+    });
+
+    return { initNodesPositions, initNodesData, initNodesOffsets };
+}
+
+const FlowChart: Component<Props> = (props: Props) => {
+    // EDGES
+    const { initEdgesNodes, initEdgesPositions, initEdgesActives } = getInitialEdges(props.nodes);
     const [edgesPositions, setEdgesPositions] = createSignal<EdgesPositions>(initEdgesPositions);
     const [edgesNodes, setEdgesNodes] = createSignal<EdgesNodes>(initEdgesNodes);
     const [edgesActives, setEdgesActives] = createSignal<EdgesActive>(initEdgesActives);
 
-    const [nodesPositions, setNodesPositions] = createSignal<Position[]>(props.nodes.map((node: NodeProps) => node.position));
-    const [nodesData, setNodesData] = createStore<NodeData[]>(
-        props.nodes.map((node: NodeProps, nodeIndex: number) => {
-            return {
-                data: node.data,
-                inputs: node.inputs,
-                outputs: node.outputs,
-                edgesIn: props.edges
-                    .map((edge: EdgeProps, edgeIndex: number) => {
-                        if (edge.targetNode === nodeIndex)
-                            return getEdgeId(edge.sourceNode.toString(), edge.sourceOutput, edge.targetNode.toString(), edge.targetInput);
-                        return "null";
-                    })
-                    .filter((elem: string) => elem !== "null"),
-                edgesOut: props.edges
-                    .map((edge: EdgeProps, edgeIndex: number) => {
-                        if (edge.sourceNode === nodeIndex)
-                            return getEdgeId(edge.sourceNode.toString(), edge.sourceOutput, edge.targetNode.toString(), edge.targetInput);
-                        return "null";
-                    })
-                    .filter((elem: string) => elem !== "null"),
-            };
-        })
-    );
-    const [nodesOffsets, setNodesOffsets] = createStore<
-        { inputs: { offset: { x: number; y: number } }[]; outputs: { offset: { x: number; y: number } }[] }[]
-    >(
-        props.nodes.map((node: NodeProps, nodeIndex: number) => {
-            return {
-                inputs: [...Array(node.inputs)].map((elem: number) => {
-                    return { offset: { x: 0, y: 0 } };
-                }),
-                outputs: [...Array(node.outputs)].map((elem: number) => {
-                    return { offset: { x: 0, y: 0 } };
-                }),
-            };
-        })
-    );
+    // NODES
+    const { initNodesPositions, initNodesData, initNodesOffsets } = getInitialNodes(props.nodes, props.edges);
+    const [nodesPositions, setNodesPositions] = createSignal<Position[]>(initNodesPositions);
+    const [nodesData, setNodesData] = createStore<NodeData[]>(initNodesData);
+    const [nodesOffsets, setNodesOffsets] =
+        createStore<{ inputs: { offset: Position }[]; outputs: { offset: Position }[] }[]>(initNodesOffsets);
 
     const [clickedDelta, setClickedDelta] = createSignal<Position>({ x: 0, y: 0 });
     const [newEdge, setNewEdge] = createSignal<{ position: Vector; sourceNode: number; sourceOutput: number } | null>(null);
 
-    function getEdgeId(nodeOutId: string, outputIndex: number, nodeInId: string, inputIndex: number) {
-        return `edge_${nodeOutId}:${outputIndex}_${nodeInId}:${inputIndex}`;
-    }
+    createEffect(() => {
+        const nextNodesLength = props.nodes.length;
+        const prevNodesLength = nodesData.length;
+
+        if (nextNodesLength !== prevNodesLength) {
+            setNodesPositions(props.nodes.map((node: NodeProps) => node.position));
+            setNodesData(
+                props.nodes.map((node: NodeProps, nodeIndex: number) => {
+                    return {
+                        data: node.data,
+                        inputs: node.inputs,
+                        outputs: node.outputs,
+                        edgesIn: props.edges
+                            .map((edge: EdgeProps, edgeIndex: number) => {
+                                if (edge.targetNode === nodeIndex)
+                                    return getEdgeId(
+                                        edge.sourceNode.toString(),
+                                        edge.sourceOutput,
+                                        edge.targetNode.toString(),
+                                        edge.targetInput
+                                    );
+                                return "null";
+                            })
+                            .filter((elem: string) => elem !== "null"),
+                        edgesOut: props.edges
+                            .map((edge: EdgeProps, edgeIndex: number) => {
+                                if (edge.sourceNode === nodeIndex)
+                                    return getEdgeId(
+                                        edge.sourceNode.toString(),
+                                        edge.sourceOutput,
+                                        edge.targetNode.toString(),
+                                        edge.targetInput
+                                    );
+                                return "null";
+                            })
+                            .filter((elem: string) => elem !== "null"),
+                    };
+                })
+            );
+            setNodesOffsets(
+                props.nodes.map((node: NodeProps, nodeIndex: number) => {
+                    return {
+                        inputs: [...Array(node.inputs)].map((elem: number) => {
+                            return { offset: { x: 0, y: 0 } };
+                        }),
+                        outputs: [...Array(node.outputs)].map((elem: number) => {
+                            return { offset: { x: 0, y: 0 } };
+                        }),
+                    };
+                })
+            );
+            console.log("nodesPositions", nodesPositions());
+            console.log("nodesData", JSON.parse(JSON.stringify(nodesData)));
+        }
+    });
 
     // NODE HANDLERS
     function handleOnNodeMount(values: {
