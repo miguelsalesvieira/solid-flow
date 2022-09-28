@@ -7,55 +7,37 @@ const initialNodes = [
         id: "node-1",
         position: { x: 50, y: 100 },
         data: {
-            content: (
-                <div>
-                    <h3>Content</h3>
-                </div>
-            ),
+            content: <p>This is a simple node</p>,
         },
         inputs: 0,
-        outputs: 2,
+        outputs: 1,
     },
     {
         id: "node-2",
-        position: { x: 300, y: 100 },
+        position: { x: 350, y: 100 },
         data: {
-            label: "Node 2",
-            content: (
-                <div>
-                    <h3>Content</h3>
-                    <button onClick={() => console.log("im button")}>button</button>
-                </div>
-            ),
+            label: "Node with label",
+            content: <p>This is a node with a label</p>,
         },
-        inputs: 2,
+        inputs: 1,
         outputs: 1,
     },
     {
         id: "node-3",
-        position: { x: 300, y: 300 },
+        position: { x: 350, y: 300 },
         data: {
-            label: "Node 3",
-            content: (
-                <div>
-                    <h3>Content</h3>
-                </div>
-            ),
+            content: <p style={{ width: "200px" }}>This is a node with two inputs and two outputs</p>,
         },
         inputs: 2,
-        outputs: 1,
+        outputs: 2,
     },
 
     {
         id: "node-4",
-        position: { x: 600, y: 100 },
+        position: { x: 700, y: 100 },
         data: {
-            label: "Node 4",
-            content: (
-                <div>
-                    <h3>Content</h3>
-                </div>
-            ),
+            label: "Only inputs",
+            content: <p>This is a node with only inputs</p>,
         },
         inputs: 2,
         outputs: 0,
@@ -64,35 +46,28 @@ const initialNodes = [
 
 const initialEdges = [
     {
-        id: "edge-0:1-1:0",
+        id: "edge_0:0_1:0",
         sourceNode: 0,
-        sourceOutput: 1,
+        sourceOutput: 0,
         targetNode: 1,
         targetInput: 0,
     },
     {
-        id: "edge-0:1-2:0",
+        id: "edge_0:0_2:0",
         sourceNode: 0,
-        sourceOutput: 1,
+        sourceOutput: 0,
         targetNode: 2,
         targetInput: 0,
     },
     {
-        id: "edge-0:0-1:1",
-        sourceNode: 0,
-        sourceOutput: 0,
-        targetNode: 1,
-        targetInput: 1,
-    },
-    {
-        id: "edge-1:0-3:0",
+        id: "edge_1:0_3:0",
         sourceNode: 1,
         sourceOutput: 0,
         targetNode: 3,
         targetInput: 0,
     },
     {
-        id: "edge-2:0-3:1",
+        id: "edge_2:0_3:1",
         sourceNode: 2,
         sourceOutput: 0,
         targetNode: 3,
