@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal } from "solid-js";
+import { Component, createEffect, createSignal, onCleanup } from "solid-js";
 import styles from "./styles.module.css";
 
 interface Props {
@@ -7,6 +7,7 @@ interface Props {
     position: { x0: number; y0: number; x1: number; y1: number };
     onClickEdge: () => void;
     onClickDelete: () => void;
+    onClickOutside: () => void;
 }
 
 const EdgeComponent: Component<Props> = (props: Props) => {
@@ -24,14 +25,31 @@ const EdgeComponent: Component<Props> = (props: Props) => {
         });
     });
 
+    function clickOutside(el: any, accessor: any) {
+        const onClick = (e: any) => {
+            if (!el.contains(e.target)) {
+                accessor()?.();
+            }
+        };
+        document.body.addEventListener("click", onClick);
+        onCleanup(() => document.body.removeEventListener("click", onClick));
+    }
+
+    function calculateOffset(value: number): number {
+        return (value * 100) / 200;
+    }
+
     return (
         <>
             <path
                 class={props.isNew ? styles.edgeNew : props.selected ? styles.edgeSelected : styles.edge}
-                d={`M ${props.position.x0} ${props.position.y0} C ${props.position.x0 + 100} ${props.position.y0}, ${
-                    props.position.x1 - 100
-                } ${props.position.y1}, ${props.position.x1} ${props.position.y1}`}
+                d={`M ${props.position.x0} ${props.position.y0} C ${
+                    props.position.x0 + calculateOffset(Math.abs(props.position.x1 - props.position.x0))
+                } ${props.position.y0}, ${props.position.x1 - calculateOffset(Math.abs(props.position.x1 - props.position.x0))} ${
+                    props.position.y1
+                }, ${props.position.x1} ${props.position.y1}`}
                 onClick={() => props.onClickEdge()}
+                use:clickOutside={() => props.onClickOutside()}
             />
             {props.selected && (
                 <g
@@ -48,10 +66,12 @@ const EdgeComponent: Component<Props> = (props: Props) => {
                         class={styles.icon}
                         width="20"
                         height="20"
-                        viewBox="500 500 1000 1000"
+                        viewBox="0 0 20 20"
                         color="white"
+                        x="-10"
+                        y="-10"
                     >
-                        <path d="M864 256H736v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zm-200 0H360v-72h304v72z"></path>
+                        <path d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z"></path>
                     </svg>
                 </g>
             )}

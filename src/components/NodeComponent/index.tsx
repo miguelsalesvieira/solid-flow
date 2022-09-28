@@ -1,5 +1,14 @@
-import { Accessor, Component, For, onMount } from "solid-js";
+import { Accessor, Component, For, onCleanup, onMount } from "solid-js";
 import styles from "./styles.module.css";
+
+declare module "solid-js" {
+    namespace JSX {
+        interface Directives {
+            // use:model
+            clickOutside: () => void;
+        }
+    }
+}
 
 interface Props {
     ref?: any;
@@ -14,6 +23,7 @@ interface Props {
     onMouseDown?: (event: any) => void;
     onMouseDownOutput?: (outputIndex: number) => void;
     onMouseUpInput?: (inputIndex: number) => void;
+    onClickOutside: () => void;
 }
 
 const NodeComponent: Component<Props> = (props: Props) => {
@@ -33,12 +43,23 @@ const NodeComponent: Component<Props> = (props: Props) => {
         props.onNodeMount(inputs, outputs);
     });
 
+    function clickOutside(el: any, accessor: any) {
+        const onClick = (e: any) => {
+            if (!el.contains(e.target)) {
+                accessor()?.();
+            }
+        };
+        document.body.addEventListener("click", onClick);
+        onCleanup(() => document.body.removeEventListener("click", onClick));
+    }
+
     return (
         <div
             ref={props.ref}
-            class={styles.node}
-            style={{ transform: `translate(${props.x}px, ${props.y}px)`, "z-index": props.selected ? 100 : 1 }}
+            class={props.selected ? styles.nodeSelected : styles.node}
+            style={{ transform: `translate(${props.x}px, ${props.y}px)` }}
             onMouseDown={props.onMouseDown}
+            use:clickOutside={() => props.onClickOutside()}
         >
             <span class={styles.nodeLabel}>{props.label}</span>
             <div class={styles.nodeContent}>{props.content}</div>

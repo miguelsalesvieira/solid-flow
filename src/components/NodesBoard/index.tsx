@@ -89,6 +89,9 @@ const NodesBoard: Component<Props> = (props: Props) => {
                         }
                         onMouseDownOutput={(outputIndex: number) => props.onOutputMouseDown(index(), outputIndex)}
                         onMouseUpInput={(inputIndex: number) => props.onInputMouseUp(index(), inputIndex)}
+                        onClickOutside={() => {
+                            if (index() === selected()) setSelected(null);
+                        }}
                     />
                 )}
             </For>

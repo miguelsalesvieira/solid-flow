@@ -51,6 +51,7 @@ const EdgesBoard: Component<Props> = (props: Props) => {
                     }}
                     onClickDelete={() => {}}
                     onClickEdge={() => {}}
+                    onClickOutside={() => {}}
                 />
             )}
             <For each={ids()}>
@@ -71,6 +72,9 @@ const EdgesBoard: Component<Props> = (props: Props) => {
                                 }}
                                 onClickEdge={() => {
                                     setSelected(edgeId);
+                                }}
+                                onClickOutside={() => {
+                                    if (selected() === edgeId) setSelected("null");
                                 }}
                             />
                         );
