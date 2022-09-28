@@ -6,10 +6,12 @@ import styles from "./styles.module.css";
 
 import Simple from "./Simple";
 import Increment from "./Increment";
+import Timer from "./Timer";
 
 const routes: { label: string; path: string; component: Component }[] = [
     { label: "Simple", path: "simple", component: Simple },
     { label: "Increment", path: "increment", component: Increment },
+    { label: "Timer", path: "timer", component: Timer },
 ];
 
 interface HeaderProps {
