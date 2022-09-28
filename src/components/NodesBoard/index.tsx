@@ -3,7 +3,7 @@ import NodeComponent from "../NodeComponent";
 import styles from "./styles.module.css";
 
 interface NodeProps {
-    data: { label: string; content: any };
+    data: { label?: string; content: any };
     inputs: number;
     outputs: number;
 }

@@ -15,7 +15,7 @@ interface Props {
     x: number;
     y: number;
     selected: boolean;
-    label: string;
+    label?: string;
     content: any;
     inputs: number;
     outputs: number;
@@ -61,7 +61,7 @@ const NodeComponent: Component<Props> = (props: Props) => {
             onMouseDown={props.onMouseDown}
             use:clickOutside={() => props.onClickOutside()}
         >
-            <span class={styles.nodeLabel}>{props.label}</span>
+            {props.label && <span class={styles.nodeLabel}>{props.label}</span>}
             <div class={styles.nodeContent}>{props.content}</div>
             {props.inputs > 0 && (
                 <div class={styles.nodeInputs}>

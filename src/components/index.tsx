@@ -17,7 +17,7 @@ interface Vector {
 }
 
 interface NodeData {
-    data: { label: string; content: any };
+    data: { label?: string; content: any };
     inputs: number;
     outputs: number;
     edgesIn: string[];
@@ -39,7 +39,7 @@ interface EdgesActive {
 export interface NodeProps {
     id: string;
     position: { x: number; y: number };
-    data: { label: string; content: any };
+    data: { label?: string; content: any };
     inputs: number;
     outputs: number;
 }

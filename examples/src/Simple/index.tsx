@@ -7,7 +7,6 @@ const initialNodes = [
         id: "node-1",
         position: { x: 50, y: 100 },
         data: {
-            label: "Single Select",
             content: (
                 <div>
                     <h3>Content</h3>
@@ -102,8 +101,8 @@ const initialEdges = [
 ];
 
 const Simple: Component = () => {
-    const [nodes, setNodes] = createSignal(initialNodes);
-    const [edges, setEdges] = createSignal(initialEdges);
+    const [nodes, setNodes] = createSignal<Node[]>(initialNodes);
+    const [edges, setEdges] = createSignal<Edge[]>(initialEdges);
 
     createEffect(() => {
         console.log("nodes", nodes());
