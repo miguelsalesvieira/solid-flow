@@ -204,8 +204,6 @@ const FlowChart: Component<Props> = (props: Props) => {
                     };
                 })
             );
-            console.log("nodesPositions", nodesPositions());
-            console.log("nodesData", JSON.parse(JSON.stringify(nodesData)));
         }
     });
 
