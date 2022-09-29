@@ -1,34 +1,114 @@
-## Usage
+# Solid Flow
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+A simple yet complex [Solidjs](https://www.solidjs.com/) component for building interactive node-based diagrams and editors
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+## Installation
 
 ```bash
-$ npm install # or pnpm install or yarn install
+$ npm install solid-flow
 ```
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+## Usage
 
-## Available Scripts
+A very simple example to get started with solid-flow. If you want to check out more complex examples plese refer to [examples](#examples)
 
-In the project directory, you can run:
+```javascript
+import { createEffect, createSignal } from "solid-js";
+import { SolidFlow } from "solid-flow";
+import styles from "./styles.module.css";
 
-### `npm dev` or `npm start`
+const initialNodes = [
+    {
+        id: "node-1",
+        position: { x: 50, y: 100 },
+        data: {
+            content: <p>This is a simple node</p>,
+        },
+        inputs: 0,
+        outputs: 1,
+    },
+    {
+        id: "node-2",
+        position: { x: 350, y: 100 },
+        data: {
+            label: "Node with label",
+            content: <p>This is a node with a label</p>,
+        },
+        inputs: 1,
+        outputs: 0,
+    },
+];
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+const initialEdges = [
+    {
+        id: "edge_node-1:0_node-2:0",
+        sourceNode: "node-1",
+        sourceOutput: 0,
+        targetNode: "node-2",
+        targetInput: 0,
+    },
+];
 
-The page will reload if you make edits.<br>
+const Example = () => {
+    const [nodes, setNodes] = createSignal(initialNodes);
+    const [edges, setEdges] = createSignal(initialEdges);
 
-### `npm run build`
+    return (
+        <div class={styles.main}>
+            <SolidFlow
+                nodes={nodes()}
+                edges={edges()}
+                onNodesChange={(newNodes) => {
+                    setNodes(newNodes);
+                }}
+                onEdgesChange={(newEdges) => {
+                    setEdges(newEdges);
+                }}
+            />
+        </div>
+    );
+};
+```
+<a name="development"></a>
 
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
+## Development
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+To begin development first you need to `git clone` this repository to your local machine. Once that's done, on the main directory, run
 
-## Deployment
+```bash
+npm install
+```
 
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+to install the packages and then run
+
+```bash
+npm start
+```
+
+to rollup the project.
+
+From here, everytime a change is made the project will be built automatically. To test it out follow the instructions on [examples](#examples) and use of the examples as a development template.
+
+<a name="examples"></a>
+
+## Examples
+
+To run the examples first make sure your've gone trough all the steps explained in [development](#development). Once you've got that set up then go to the examples directory
+
+```bash
+cd examples
+```
+
+Install it
+
+```bash
+npm install
+```
+
+and run it
+
+```bash
+npm start
+```
+
+you should now be able to check it out on your [localhost](http://127.0.0.1:3000/). You can use the examples as a template for development.
