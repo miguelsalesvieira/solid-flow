@@ -1,2 +1,5 @@
 node_modules
 dist
+yarn.lock
+yarn-error.log
+package-lock.json
