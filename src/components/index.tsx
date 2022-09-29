@@ -139,8 +139,8 @@ function getInitialNodes(
 const FlowChart: Component<Props> = (props: Props) => {
     // EDGES
     const { initEdgesNodes, initEdgesPositions, initEdgesActives } = getInitialEdges(props.nodes);
-    const [edgesPositions, setEdgesPositions] = createSignal<EdgesPositions>(initEdgesPositions);
     const [edgesNodes, setEdgesNodes] = createSignal<EdgesNodes>(initEdgesNodes);
+    const [edgesPositions, setEdgesPositions] = createSignal<EdgesPositions>(initEdgesPositions);
     const [edgesActives, setEdgesActives] = createSignal<EdgesActive>(initEdgesActives);
 
     // NODES
@@ -158,52 +158,15 @@ const FlowChart: Component<Props> = (props: Props) => {
         const prevNodesLength = nodesData.length;
 
         if (nextNodesLength !== prevNodesLength) {
-            setNodesPositions(props.nodes.map((node: NodeProps) => node.position));
-            setNodesData(
-                props.nodes.map((node: NodeProps, nodeIndex: number) => {
-                    return {
-                        data: node.data,
-                        inputs: node.inputs,
-                        outputs: node.outputs,
-                        edgesIn: props.edges
-                            .map((edge: EdgeProps, edgeIndex: number) => {
-                                if (edge.targetNode === nodeIndex)
-                                    return getEdgeId(
-                                        edge.sourceNode.toString(),
-                                        edge.sourceOutput,
-                                        edge.targetNode.toString(),
-                                        edge.targetInput
-                                    );
-                                return "null";
-                            })
-                            .filter((elem: string) => elem !== "null"),
-                        edgesOut: props.edges
-                            .map((edge: EdgeProps, edgeIndex: number) => {
-                                if (edge.sourceNode === nodeIndex)
-                                    return getEdgeId(
-                                        edge.sourceNode.toString(),
-                                        edge.sourceOutput,
-                                        edge.targetNode.toString(),
-                                        edge.targetInput
-                                    );
-                                return "null";
-                            })
-                            .filter((elem: string) => elem !== "null"),
-                    };
-                })
-            );
-            setNodesOffsets(
-                props.nodes.map((node: NodeProps, nodeIndex: number) => {
-                    return {
-                        inputs: [...Array(node.inputs)].map((elem: number) => {
-                            return { offset: { x: 0, y: 0 } };
-                        }),
-                        outputs: [...Array(node.outputs)].map((elem: number) => {
-                            return { offset: { x: 0, y: 0 } };
-                        }),
-                    };
-                })
-            );
+            const { initEdgesNodes, initEdgesPositions, initEdgesActives } = getInitialEdges(props.nodes);
+            setEdgesNodes(initEdgesNodes);
+            setEdgesPositions(initEdgesPositions);
+            setEdgesActives(initEdgesActives);
+            const { initNodesPositions, initNodesData, initNodesOffsets } = getInitialNodes(props.nodes, props.edges);
+
+            setNodesPositions(initNodesPositions);
+            setNodesData(initNodesData);
+            setNodesOffsets(initNodesOffsets);
         }
     });
 
@@ -312,6 +275,11 @@ const FlowChart: Component<Props> = (props: Props) => {
     }
 
     function handleOnInputMouseUp(nodeIndex: number, inputIndex: number) {
+        if (newEdge()?.sourceNode === nodeIndex) {
+            setNewEdge(null);
+            return;
+        }
+
         const outputEdges: string[] = JSON.parse(JSON.stringify(nodesData[newEdge()?.sourceNode || 0].edgesOut));
         const inputEdges: string[] = JSON.parse(JSON.stringify(nodesData[nodeIndex].edgesIn));
 

@@ -27,8 +27,8 @@ const AddNodes: Component = () => {
                                                 label: `Node ${nodes().length}`,
                                                 content: <p>Simple Node</p>,
                                             },
-                                            inputs: 0,
-                                            outputs: 0,
+                                            inputs: 1,
+                                            outputs: 1,
                                         },
                                     ]);
                                 }}
