@@ -55,6 +55,6 @@
     height: 150vh;
     width: calc(1080px * 2);
     background-color: white;
-    background-size: 40px 40px;
-    background-image: radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px);
+    background-size: 30px 30px;
+    background-image: radial-gradient(circle, #b8b8b8bf 1px, rgba(0, 0, 0, 0) 1px);
 }
