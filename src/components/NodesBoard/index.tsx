@@ -3,9 +3,11 @@ import NodeComponent from "../NodeComponent";
 import styles from "./styles.module.css";
 
 interface NodeProps {
+    id: string;
     data: { label?: string; content: any };
     inputs: number;
     outputs: number;
+    actions?: { delete: boolean };
 }
 
 interface Props {
@@ -18,6 +20,7 @@ interface Props {
     }) => void;
     onNodePress: (x: number, y: number) => void;
     onNodeMove: (nodeIndex: number, x: number, y: number) => void;
+    onNodeDelete: (nodeId: string) => void;
     onOutputMouseDown: (nodeIndex: number, outputIndex: number) => void;
     onInputMouseUp: (nodeIndex: number, inputIndex: number) => void;
     onMouseUp: () => void;
@@ -61,6 +64,7 @@ const NodesBoard: Component<Props> = (props: Props) => {
                         x={props.nodesPositions[index()].x}
                         y={props.nodesPositions[index()].y}
                         selected={selected() === index()}
+                        actions={node.actions}
                         label={node.data.label}
                         content={node.data.content}
                         inputs={node.inputs}
@@ -91,6 +95,10 @@ const NodesBoard: Component<Props> = (props: Props) => {
                         onMouseUpInput={(inputIndex: number) => props.onInputMouseUp(index(), inputIndex)}
                         onClickOutside={() => {
                             if (index() === selected()) setSelected(null);
+                        }}
+                        onClickDelete={() => {
+                            setSelected(null);
+                            props.onNodeDelete(node.id);
                         }}
                     />
                 )}

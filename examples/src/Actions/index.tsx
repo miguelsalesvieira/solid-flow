@@ -2,7 +2,7 @@ import { Component, createEffect, createSignal, onMount } from "solid-js";
 import { Node, Edge, SolidFlow } from "solid-flow";
 import styles from "./styles.module.css";
 
-const AddNodes: Component = () => {
+const Actions: Component = () => {
     const [nodes, setNodes] = createSignal<Node[]>([]);
     const [edges, setEdges] = createSignal<Edge[]>([]);
 
@@ -18,17 +18,19 @@ const AddNodes: Component = () => {
                             <button
                                 class={styles.button}
                                 onClick={() => {
+                                    const randomId = Math.floor(Math.random() * 10000).toString();
                                     setNodes([
                                         ...nodes(),
                                         {
-                                            id: `node-${nodes().length + 1}`,
+                                            id: `node-${randomId}`,
                                             position: { x: 200, y: 200 },
                                             data: {
-                                                label: `Node ${nodes().length}`,
-                                                content: <p>Simple Node</p>,
+                                                label: `Node ${randomId}`,
+                                                content: <p>Simple Node with delete action</p>,
                                             },
                                             inputs: 1,
                                             outputs: 1,
+                                            actions: { delete: true },
                                         },
                                     ]);
                                 }}
@@ -56,11 +58,9 @@ const AddNodes: Component = () => {
                 nodes={nodes()}
                 edges={edges()}
                 onNodesChange={(newNodes: Node[]) => {
-                    console.log("new nodes", newNodes);
                     setNodes(newNodes);
                 }}
                 onEdgesChange={(newEdges: Edge[]) => {
-                    console.log("new edges", newEdges);
                     setEdges(newEdges);
                 }}
             />
@@ -68,4 +68,4 @@ const AddNodes: Component = () => {
     );
 };
 
-export default AddNodes;
+export default Actions;

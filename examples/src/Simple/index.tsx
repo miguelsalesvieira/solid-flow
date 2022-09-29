@@ -47,30 +47,30 @@ const initialNodes = [
 const initialEdges = [
     {
         id: "edge_0:0_1:0",
-        sourceNode: 0,
+        sourceNode: "node-1",
         sourceOutput: 0,
-        targetNode: 1,
+        targetNode: "node-2",
         targetInput: 0,
     },
     {
         id: "edge_0:0_2:0",
-        sourceNode: 0,
+        sourceNode: "node-1",
         sourceOutput: 0,
-        targetNode: 2,
+        targetNode: "node-3",
         targetInput: 0,
     },
     {
         id: "edge_1:0_3:0",
-        sourceNode: 1,
+        sourceNode: "node-2",
         sourceOutput: 0,
-        targetNode: 3,
+        targetNode: "node-4",
         targetInput: 0,
     },
     {
         id: "edge_2:0_3:1",
-        sourceNode: 2,
+        sourceNode: "node-3",
         sourceOutput: 0,
-        targetNode: 3,
+        targetNode: "node-4",
         targetInput: 1,
     },
 ];
@@ -90,11 +90,9 @@ const Simple: Component = () => {
                 nodes={nodes()}
                 edges={edges()}
                 onNodesChange={(newNodes: Node[]) => {
-                    console.log("new nodes", newNodes);
                     setNodes(newNodes);
                 }}
                 onEdgesChange={(newEdges: Edge[]) => {
-                    console.log("new edges", newEdges);
                     setEdges(newEdges);
                 }}
             />

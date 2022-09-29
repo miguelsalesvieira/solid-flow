@@ -62,10 +62,10 @@ const EdgesBoard: Component<Props> = (props: Props) => {
                                 selected={edgeId === selected()}
                                 isNew={false}
                                 position={{
-                                    x0: props.edgesPositions[edgeId].x0,
-                                    y0: props.edgesPositions[edgeId].y0,
-                                    x1: props.edgesPositions[edgeId].x1,
-                                    y1: props.edgesPositions[edgeId].y1,
+                                    x0: props.edgesPositions[edgeId]?.x0 || 0,
+                                    y0: props.edgesPositions[edgeId]?.y0 || 0,
+                                    x1: props.edgesPositions[edgeId]?.x1 || 0,
+                                    y1: props.edgesPositions[edgeId]?.y1 || 0,
                                 }}
                                 onClickDelete={() => {
                                     props.onDeleteEdge(edgeId);

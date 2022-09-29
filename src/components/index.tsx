@@ -17,6 +17,7 @@ interface Vector {
 }
 
 interface NodeData {
+    id: string;
     data: { label?: string; content: any };
     inputs: number;
     outputs: number;
@@ -42,12 +43,13 @@ export interface NodeProps {
     data: { label?: string; content: any };
     inputs: number;
     outputs: number;
+    actions?: { delete: boolean };
 }
 
 export interface EdgeProps {
     id: string;
-    sourceNode: number;
-    targetNode: number;
+    sourceNode: string;
+    targetNode: string;
     sourceOutput: number;
     targetInput: number;
 }
@@ -80,10 +82,10 @@ function getInitialEdges(nodes: NodeProps[]): {
 
                 for (let x = 0; x < nodeI.outputs; x++) {
                     for (let y = 0; y < nodeJ.inputs; y++) {
-                        const edgeId = getEdgeId(i.toString(), x, j.toString(), y);
+                        const edgeId = getEdgeId(nodeI.id, x, nodeJ.id, y);
                         initEdgesPositions[edgeId] = { x0: 0, y0: 0, x1: 0, y1: 0 };
                         initEdgesActives[edgeId] = false;
-                        initEdgesNodes[edgeId] = { outNodeId: i.toString(), outputIndex: x, inNodeId: j.toString(), inputIndex: y };
+                        initEdgesNodes[edgeId] = { outNodeId: nodeI.id, outputIndex: x, inNodeId: nodeJ.id, inputIndex: y };
                     }
                 }
             }
@@ -101,33 +103,31 @@ function getInitialNodes(
     initNodesOffsets: { inputs: { offset: Position }[]; outputs: { offset: Position }[] }[];
 } {
     const initNodesPositions = nodes.map((node: NodeProps) => node.position);
-    const initNodesData = nodes.map((node: NodeProps, nodeIndex: number) => {
+    const initNodesData = nodes.map((node: NodeProps) => {
         return {
-            data: node.data,
-            inputs: node.inputs,
-            outputs: node.outputs,
             edgesIn: edges
-                .map((edge: EdgeProps, edgeIndex: number) => {
-                    if (edge.targetNode === nodeIndex)
-                        return getEdgeId(edge.sourceNode.toString(), edge.sourceOutput, edge.targetNode.toString(), edge.targetInput);
+                .map((edge: EdgeProps) => {
+                    if (edge.targetNode === node.id)
+                        return getEdgeId(edge.sourceNode, edge.sourceOutput, edge.targetNode, edge.targetInput);
                     return "null";
                 })
                 .filter((elem: string) => elem !== "null"),
             edgesOut: edges
-                .map((edge: EdgeProps, edgeIndex: number) => {
-                    if (edge.sourceNode === nodeIndex)
-                        return getEdgeId(edge.sourceNode.toString(), edge.sourceOutput, edge.targetNode.toString(), edge.targetInput);
+                .map((edge: EdgeProps) => {
+                    if (edge.sourceNode === node.id)
+                        return getEdgeId(edge.sourceNode, edge.sourceOutput, edge.targetNode, edge.targetInput);
                     return "null";
                 })
                 .filter((elem: string) => elem !== "null"),
+            ...node,
         };
     });
-    const initNodesOffsets = nodes.map((node: NodeProps, nodeIndex: number) => {
+    const initNodesOffsets = nodes.map((node: NodeProps) => {
         return {
-            inputs: [...Array(node.inputs)].map((elem: number) => {
+            inputs: [...Array(node.inputs)].map(() => {
                 return { offset: { x: 0, y: 0 } };
             }),
-            outputs: [...Array(node.outputs)].map((elem: number) => {
+            outputs: [...Array(node.outputs)].map(() => {
                 return { offset: { x: 0, y: 0 } };
             }),
         };
@@ -163,7 +163,6 @@ const FlowChart: Component<Props> = (props: Props) => {
             setEdgesPositions(initEdgesPositions);
             setEdgesActives(initEdgesActives);
             const { initNodesPositions, initNodesData, initNodesOffsets } = getInitialNodes(props.nodes, props.edges);
-
             setNodesPositions(initNodesPositions);
             setNodesData(initNodesData);
             setNodesOffsets(initNodesOffsets);
@@ -259,6 +258,13 @@ const FlowChart: Component<Props> = (props: Props) => {
         });
     }
 
+    function handleOnNodeDelete(nodeId: string) {
+        const newNodes = props.nodes.filter((node: NodeProps) => node.id !== nodeId);
+        const newEdges = props.edges.filter((edge: EdgeProps) => edge.sourceNode !== nodeId && edge.targetNode !== nodeId);
+        props.onEdgesChange(newEdges);
+        props.onNodesChange(newNodes);
+    }
+
     function handleOnOutputMouseDown(nodeIndex: number, outputIndex: number) {
         const nodePosition = nodesPositions()[nodeIndex];
         const outputOffset = nodesOffsets[nodeIndex].outputs[outputIndex].offset;
@@ -283,7 +289,11 @@ const FlowChart: Component<Props> = (props: Props) => {
         const outputEdges: string[] = JSON.parse(JSON.stringify(nodesData[newEdge()?.sourceNode || 0].edgesOut));
         const inputEdges: string[] = JSON.parse(JSON.stringify(nodesData[nodeIndex].edgesIn));
 
-        const edgeId = getEdgeId(newEdge()?.sourceNode.toString() || "", newEdge()?.sourceOutput || 0, nodeIndex.toString(), inputIndex);
+        if (!newEdge()) return;
+        const sourceNodeId = nodesData[newEdge()?.sourceNode || 0].id;
+        const targetNodeId = nodesData[nodeIndex].id;
+
+        const edgeId = getEdgeId(sourceNodeId, newEdge()?.sourceOutput || 0, targetNodeId, inputIndex);
 
         let haveEdge = false;
         if (outputEdges.includes(edgeId)) haveEdge = true;
@@ -322,9 +332,9 @@ const FlowChart: Component<Props> = (props: Props) => {
                     const edgeInfo = edgesNodes()[activeEdgesKeys[i]];
                     activeEdges.push({
                         id: activeEdgesKeys[i],
-                        sourceNode: parseInt(edgeInfo.outNodeId),
+                        sourceNode: edgeInfo.outNodeId,
                         sourceOutput: edgeInfo.outputIndex,
-                        targetNode: parseInt(edgeInfo.inNodeId),
+                        targetNode: edgeInfo.inNodeId,
                         targetInput: edgeInfo.inputIndex,
                     });
                 }
@@ -341,7 +351,7 @@ const FlowChart: Component<Props> = (props: Props) => {
     function handleOnMouseMove(x: number, y: number) {
         if (newEdge() !== null)
             setNewEdge({
-                position: { x0: newEdge()?.position.x0 || 0, y0: newEdge()?.position.y0 || 0, x1: x, y1: y },
+                position: { x0: newEdge()?.position?.x0 || 0, y0: newEdge()?.position?.y0 || 0, x1: x, y1: y },
                 sourceNode: newEdge()?.sourceNode || 0,
                 sourceOutput: newEdge()?.sourceOutput || 0,
             });
@@ -351,8 +361,11 @@ const FlowChart: Component<Props> = (props: Props) => {
     function handleOnDeleteEdge(edgeId: string) {
         setNodesData(
             produce((nodesData: NodeData[]) => {
-                const nodeSourceIndex = parseInt(edgesNodes()[edgeId].outNodeId);
-                const nodeTargetIndex = parseInt(edgesNodes()[edgeId].inNodeId);
+                const nodeSourceId = edgesNodes()[edgeId].outNodeId;
+                const nodeTargetId = edgesNodes()[edgeId].inNodeId;
+
+                const nodeSourceIndex = nodesData.findIndex((node: NodeData) => node.id === nodeSourceId);
+                const nodeTargetIndex = nodesData.findIndex((node: NodeData) => node.id === nodeTargetId);
 
                 nodesData[nodeTargetIndex].edgesIn = nodesData[nodeTargetIndex].edgesIn.filter((elem: string) => elem !== edgeId);
                 nodesData[nodeSourceIndex].edgesOut = nodesData[nodeSourceIndex].edgesOut.filter((elem: string) => elem !== edgeId);
@@ -371,9 +384,9 @@ const FlowChart: Component<Props> = (props: Props) => {
                 const edgeInfo = edgesNodes()[activeEdgesKeys[i]];
                 activeEdges.push({
                     id: activeEdgesKeys[i],
-                    sourceNode: parseInt(edgeInfo.outNodeId),
+                    sourceNode: edgeInfo.outNodeId,
                     sourceOutput: edgeInfo.outputIndex,
-                    targetNode: parseInt(edgeInfo.inNodeId),
+                    targetNode: edgeInfo.inNodeId,
                     targetInput: edgeInfo.inputIndex,
                 });
             }
@@ -387,12 +400,11 @@ const FlowChart: Component<Props> = (props: Props) => {
                 <div class={styles.content} style={{ cursor: newEdge() !== null ? "crosshair" : "inherit" }}>
                     <NodesBoard
                         nodesPositions={nodesPositions()}
-                        nodes={nodesData.map((elem: NodeData) => {
-                            return { ...elem, inputs: elem.inputs, outputs: elem.outputs };
-                        })}
+                        nodes={nodesData}
                         onNodeMount={handleOnNodeMount}
                         onNodePress={handleOnNodePress}
                         onNodeMove={handleOnNodeMove}
+                        onNodeDelete={handleOnNodeDelete}
                         onOutputMouseDown={handleOnOutputMouseDown}
                         onInputMouseUp={handleOnInputMouseUp}
                         onMouseUp={handleOnMouseUp}

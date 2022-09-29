@@ -87,3 +87,42 @@
     margin: 12px 0px;
     box-shadow: 1px 1px 11px -6px rgba(0, 0, 0, 0.75);
 }
+
+.actions {
+    pointer-events: none;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    top: -30px;
+    right: 0px;
+    opacity: 1;
+    transition: all ease 0.2s;
+}
+
+.actionsHidden {
+    pointer-events: none;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 0px;
+    top: -30px;
+    right: -12px;
+    opacity: 0;
+    overflow: hidden;
+    transition: all ease 0.2s;
+}
+
+.delete {
+    width: 24px;
+    height: 24px;
+    fill: #a11111;
+    border-radius: 100%;
+    pointer-events: all;
+    cursor: pointer;
+    margin-right: 6px;
+    opacity: 1;
+    transition: all ease 0.2s;
+}
