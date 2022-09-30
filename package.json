@@ -48,7 +48,7 @@
         "url": "https://github.com/miguelsalesvieira/solid-flow.git"
     },
     "publishConfig": {
-        "access": "restricted"
+        "access": "public"
     },
     "config": {
         "commitizen": {
