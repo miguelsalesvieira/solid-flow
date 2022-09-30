@@ -24,7 +24,7 @@
         "install:examples": "cd examples && yarn",
         "test": "echo 'test'",
         "commit": "git-cz",
-        "semantic-release": "semantic-release"
+        "semantic-release": "semantic-release --branches master"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^22.0.2",
