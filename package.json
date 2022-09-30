@@ -21,7 +21,8 @@
         "start": "rollup -w -c",
         "start:examples": "cd examples && yarn start",
         "build": "rollup -c",
-        "install:examples": "cd examples && yarn"
+        "install:examples": "cd examples && yarn",
+        "test": "echo 'test'"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^22.0.2",
