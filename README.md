@@ -1,8 +1,20 @@
-# Solid Flow
+<div style="border-radius: 6px; overflow:hidden; height:247px; margin-bottom: 16px">
+<img src="assets/solid-flow.png" alt="Solid Flow logo"/>
+</div>
+
+<div align="center">
 
 A simple yet complex [Solidjs](https://www.solidjs.com/) component for building interactive node-based diagrams and editors
 
+[📖 Documentation](https://miguel-vieira.gitbook.io/solid-flow/)
+
+</div>
+
+---
+
 ## Installation
+
+To install it, simply run
 
 ```bash
 $ npm install solid-flow
@@ -69,6 +81,7 @@ const Example = () => {
     );
 };
 ```
+
 <a name="development"></a>
 
 ## Development
@@ -112,3 +125,7 @@ npm start
 ```
 
 you should now be able to check it out on your [localhost](http://127.0.0.1:3000/). You can use the examples as a template for development.
+
+## Credits
+
+Credits go to [Product Dock](https://productdock.com/) by giving the means to be able to build this project.
