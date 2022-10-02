@@ -6,7 +6,8 @@
 
 A simple yet complex [Solidjs](https://www.solidjs.com/) component for building interactive node-based diagrams and editors
 
-[📖 Documentation](https://miguel-vieira.gitbook.io/solid-flow/)
+[📖 Documentation](https://miguel-vieira.gitbook.io/solid-flow/) | 
+[🧪 Demo](https://solidflowdemo.netlify.app/)
 
 </div>
 
@@ -106,6 +107,7 @@ From here, everytime a change is made the project will be built automatically. T
 
 ## Examples
 
+You can run the examples on your local machine and tinker with them or if you simply want to have a look, you can go directly to the [demo page](https://solidflowdemo.netlify.app/).
 To run the examples first make sure your've gone trough all the steps explained in [development](#development). Once you've got that set up then go to the examples directory
 
 ```bash
