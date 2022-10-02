@@ -3,8 +3,9 @@
     "version": "0.0.0-development",
     "license": "MIT",
     "source": "src/index.ts",
-    "main": "./dist/cjs/solid-flow.js",
+    "main": "./dist/cjs/solid-flow",
     "module": "./dist/esm/solid-flow.js",
+    "typings": "./dist/index",
     "files": [
         "dist"
     ],
